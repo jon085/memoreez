@@ -82,7 +82,7 @@ const MemoryDetailsPage = () => {
   });
 
   // Format dates
-  const formatDate = (dateString?: string | Date) => {
+  const formatDate = (dateString?: string | Date | null) => {
     if (!dateString) return "";
     return format(new Date(dateString), "MMMM d, yyyy");
   };
@@ -255,7 +255,7 @@ const MemoryDetailsPage = () => {
 
           <CardContent className="pt-2">
             <div className="prose max-w-none">
-              {memory.content.split('\n').map((paragraph, i) => (
+              {memory.content?.split('\n').map((paragraph, i) => (
                 <p key={i}>{paragraph}</p>
               ))}
             </div>

@@ -22,9 +22,9 @@ function Router() {
       <Route path="/" component={HomePage} />
       <Route path="/auth" component={AuthPage} />
       <ProtectedRoute path="/memories" component={MemoriesPage} />
-      <Route path="/memories/:id" component={MemoryDetailsPage} />
       <ProtectedRoute path="/memories/add" component={AddMemoryPage} />
       <ProtectedRoute path="/memories/edit/:id" component={AddMemoryPage} />
+      <Route path="/memories/:id" component={MemoryDetailsPage} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/categories" component={CategoriesPage} />
       <AdminRoute path="/admin" component={AdminDashboard} />
