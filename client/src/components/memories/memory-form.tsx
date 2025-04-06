@@ -82,23 +82,11 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   const createMemoryMutation = useMutation({
     mutationFn: async (data: InsertMemory) => {
       console.log("Making API request to create memory:", data);
-      try {
-        const res = await apiRequest("POST", "/api/memories", data);
-        console.log("API response status:", res.status);
-        
-        if (!res.ok) {
-          const errorData = await res.json();
-          console.error("API error response:", errorData);
-          throw new Error(errorData.message || "Failed to create memory");
-        }
-        
-        const responseData = await res.json();
-        console.log("API success response:", responseData);
-        return responseData;
-      } catch (error) {
-        console.error("API request failed:", error);
-        throw error;
-      }
+      // The server will set the userId based on the authenticated user's session
+      // We don't need to send userId as the server will extract it from req.user
+      const { userId, ...memoryData } = data;
+      const res = await apiRequest("POST", "/api/memories", memoryData);
+      return await res.json();
     },
     onSuccess: (data) => {
       console.log("Memory created successfully:", data);
@@ -131,26 +119,11 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   const updateMemoryMutation = useMutation({
     mutationFn: async (data: FormValues) => {
       console.log("Making API request to update memory:", data);
-      try {
-        const res = await apiRequest("PUT", `/api/memories/${memoryId}`, {
-          ...data,
-          userId: user?.id, // Include userId in update as well
-        });
-        console.log("API response status:", res.status);
-        
-        if (!res.ok) {
-          const errorData = await res.json();
-          console.error("API error response:", errorData);
-          throw new Error(errorData.message || "Failed to update memory");
-        }
-        
-        const responseData = await res.json();
-        console.log("API success response:", responseData);
-        return responseData;
-      } catch (error) {
-        console.error("API request failed:", error);
-        throw error;
-      }
+      // Remove userId if it exists in the data
+      // The server will use the authenticated user from the session
+      const { userId, ...memoryData } = data as any;
+      const res = await apiRequest("PUT", `/api/memories/${memoryId}`, memoryData);
+      return await res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/memories"] });
@@ -202,12 +175,9 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
       console.log("Updating memory with ID:", memoryId);
       updateMemoryMutation.mutate(data);
     } else {
-      console.log("Creating new memory with userId:", user.id);
-      // Add the userId to the data when creating a new memory
-      createMemoryMutation.mutate({
-        ...data,
-        userId: user.id,
-      });
+      console.log("Creating new memory");
+      // The server will get userId from the session
+      createMemoryMutation.mutate(data as any);
     }
   };
 
