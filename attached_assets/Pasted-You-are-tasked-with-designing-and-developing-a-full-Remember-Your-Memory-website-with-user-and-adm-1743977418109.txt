@@ -1,0 +1,65 @@
+You are tasked with designing and developing a full "Remember Your Memory" website with user and admin functionalities. The project requirements will be provided to you. Your goal is to create a comprehensive project outline that covers database design, backend development, frontend development, and security measures.
+
+Here are the project requirements:
+
+Please follow these instructions to create your project outline:
+
+1. Database Design:
+   - Design a relational database schema that accommodates all the required features.
+   - Include tables for users, memories, categories, and any other necessary entities.
+   - Define relationships between tables, including foreign key constraints.
+   - Ensure the schema supports both public and private memories.
+   - Design tables to support admin functionalities like user management and content moderation.
+
+2. Backend Development:
+   - Choose an appropriate server-side language and framework - Node.js with Express or better
+   - Implement RESTful API endpoints for all required functionalities.
+   - Create controllers and models to handle data operations.
+   - Implement user authentication and authorization systems.
+   - Develop admin dashboard functionalities.
+   - Implement email verification for user registration.
+
+3. Frontend Development:
+   - Choose a frontend framework - React
+   - Design and implement the following pages:
+     a. Homepage
+     b. User registration and login
+     c. Profile edit and creation
+     d. Add memory page
+     e. View memories page (personal and public)
+     f. Category management page
+     g. Admin dashboard
+   - Ensure responsive design for various device sizes.
+   - Implement client-side form validation.
+
+4. Security Measures:
+   - Implement input validation and sanitization on both client and server sides.
+   - Use prepared statements or ORM to prevent SQL injection.
+   - Implement CSRF protection.
+   - Use secure password hashing (e.g., bcrypt).
+   - Implement rate limiting to prevent brute-force attacks.
+   - Use HTTPS for all communications.
+   - Implement proper session management.
+   - Apply Content Security Policy (CSP) headers.
+   - Regularly update and patch all dependencies.
+
+5. Additional Considerations:
+   - Implement proper error handling and logging.
+   - Design a scalable architecture to handle potential growth.
+   - Consider implementing caching mechanisms for improved performance.
+   - Plan for data backup and recovery procedures.
+
+Please provide a comprehensive project outline based on these instructions. Your outline should include specific technologies, frameworks, and libraries you recommend for each component of the project. Also, provide a high-level overview of the database schema and API endpoints.
+
+Present your project outline in the following format:
+
+<project_outline>
+1. Technology Stack
+2. Database Schema
+3. API Endpoints
+4. Frontend Components
+5. Security Measures
+6. Additional Considerations
+</project_outline>
+
+Ensure that your outline is detailed, well-structured, and addresses all the requirements and security concerns mentioned in the project requirements.
