@@ -84,13 +84,18 @@ const MemoryDetailsPage = () => {
   // Format dates
   const formatDate = (dateString?: string | Date | null) => {
     if (!dateString) return "";
-    return format(new Date(dateString), "MMMM d, yyyy");
+    try {
+      return format(new Date(dateString), "MMMM d, yyyy 'at' h:mm a");
+    } catch (error) {
+      console.error("Date formatting error:", error, dateString);
+      return "Unknown date";
+    }
   };
 
   // Check if user can edit this memory
   const canEdit = user && memory && user.id === memory.userId;
 
-  // Handle loading error
+  // Handle loading or error states
   if (error) {
     return (
       <div className="bg-gray-50 min-h-screen py-12">
@@ -151,6 +156,9 @@ const MemoryDetailsPage = () => {
     );
   }
 
+  // Determine visibility badge content
+  const isPrivate = String(memory.visibility).toLowerCase() === "private";
+
   return (
     <div className="bg-gray-50 min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -187,12 +195,12 @@ const MemoryDetailsPage = () => {
                 <Badge 
                   variant="outline" 
                   className={`flex items-center ${
-                    memory.visibility === "private" 
+                    isPrivate 
                       ? "bg-gray-100" 
                       : "bg-green-50 text-green-700"
                   }`}
                 >
-                  {memory.visibility === "private" ? (
+                  {isPrivate ? (
                     <>
                       <EyeOff className="h-3 w-3 mr-1" />
                       Private
@@ -255,8 +263,8 @@ const MemoryDetailsPage = () => {
 
           <CardContent className="pt-2">
             <div className="prose max-w-none">
-              {memory.content?.split('\n').map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
+              {memory.content?.split('\n').map((paragraph, idx) => (
+                <p key={idx}>{paragraph}</p>
               ))}
             </div>
           </CardContent>
