@@ -56,6 +56,45 @@ export class MemStorage implements IStorage {
       checkPeriod: 86400000 // prune expired entries every 24h
     });
 
+    // Create test users
+    const timestamp = new Date();
+    
+    // Regular user
+    const user = this.userStore.set(1, {
+      id: 1,
+      username: "testuser",
+      password: "e956741b91ff3ca435b75478d511a83beb4223e347dccc5d11099aae5c6216d96c1c4fc3784006a6c38285bb3d17a4b6d5b0d73580b6e61db95572af4538921b.d5c2473f4dc3c9482e4aceb7ff383dee",  // "password1" hashed
+      email: "user@test.com",
+      firstName: "Test",
+      lastName: "User",
+      role: "user",
+      bio: "I'm a regular user for testing",
+      isVerified: true,
+      verificationToken: null,
+      profilePicture: "https://i.pravatar.cc/150?img=11",
+      createdAt: timestamp,
+      updatedAt: timestamp
+    }).get(1)!;
+    
+    // Admin user
+    const admin = this.userStore.set(2, {
+      id: 2,
+      username: "admin",
+      password: "e956741b91ff3ca435b75478d511a83beb4223e347dccc5d11099aae5c6216d96c1c4fc3784006a6c38285bb3d17a4b6d5b0d73580b6e61db95572af4538921b.d5c2473f4dc3c9482e4aceb7ff383dee",  // "password1" hashed
+      email: "admin@test.com",
+      firstName: "Admin",
+      lastName: "User",
+      role: "admin",
+      bio: "I'm an admin user for testing",
+      isVerified: true,
+      verificationToken: null,
+      profilePicture: "https://i.pravatar.cc/150?img=13",
+      createdAt: timestamp,
+      updatedAt: timestamp
+    }).get(2)!;
+    
+    this.userIdCounter = 3; // Start from 3 for new users
+    
     // Create default categories
     this.createCategory({
       name: "Travel",
