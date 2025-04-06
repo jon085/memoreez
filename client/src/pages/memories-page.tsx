@@ -20,7 +20,7 @@ const MemoriesPage = () => {
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activeTab, setActiveTab] = useState("personal");
 
   // Fetch user's memories
@@ -55,7 +55,7 @@ const MemoriesPage = () => {
         memory.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         memory.content.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesCategory = selectedCategory === "" || 
+      const matchesCategory = selectedCategory === "all" || 
         memory.categoryId?.toString() === selectedCategory;
       
       return matchesSearch && matchesCategory;
@@ -113,7 +113,7 @@ const MemoriesPage = () => {
                     <SelectValue placeholder="Filter by category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories?.map((category) => (
                       <SelectItem key={category.id} value={category.id.toString()}>
                         {category.name}
@@ -144,7 +144,7 @@ const MemoriesPage = () => {
               <div className="text-center py-12 bg-white rounded-lg shadow">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No memories found</h3>
                 <p className="text-gray-500 mb-4">
-                  {searchTerm || selectedCategory
+                  {searchTerm || selectedCategory !== "all"
                     ? "No memories match your current filters. Try adjusting your search criteria."
                     : "You haven't created any memories yet. Start capturing your special moments now!"}
                 </p>
@@ -174,7 +174,7 @@ const MemoriesPage = () => {
               <div className="text-center py-12 bg-white rounded-lg shadow">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No public memories found</h3>
                 <p className="text-gray-500 mb-4">
-                  {searchTerm || selectedCategory
+                  {searchTerm || selectedCategory !== "all"
                     ? "No public memories match your current filters. Try adjusting your search criteria."
                     : "There are no public memories to display yet. Be the first to share a memory!"}
                 </p>

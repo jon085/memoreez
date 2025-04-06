@@ -208,8 +208,8 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
             <FormItem>
               <FormLabel>Category (optional)</FormLabel>
               <Select
-                onValueChange={(value) => field.onChange(Number(value) || null)}
-                value={field.value?.toString() || ""}
+                onValueChange={(value) => value === 'none' ? field.onChange(null) : field.onChange(Number(value))}
+                value={field.value?.toString() || "none"}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -217,7 +217,7 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {categories?.map((category) => (
                     <SelectItem key={category.id} value={category.id.toString()}>
                       {category.name}
