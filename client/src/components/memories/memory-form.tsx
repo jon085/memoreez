@@ -80,6 +80,10 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   const createMemoryMutation = useMutation({
     mutationFn: async (data: InsertMemory) => {
       const res = await apiRequest("POST", "/api/memories", data);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to create memory");
+      }
       return await res.json();
     },
     onSuccess: () => {
@@ -89,7 +93,9 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
         title: "Memory Created",
         description: "Your memory has been saved successfully.",
       });
-      navigate("/memories");
+      setTimeout(() => {
+        navigate("/memories");
+      }, 500); // Short delay to ensure toast is visible
     },
     onError: (error: Error) => {
       toast({
@@ -107,6 +113,10 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   const updateMemoryMutation = useMutation({
     mutationFn: async (data: FormValues) => {
       const res = await apiRequest("PUT", `/api/memories/${memoryId}`, data);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to update memory");
+      }
       return await res.json();
     },
     onSuccess: () => {
@@ -117,7 +127,9 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
         title: "Memory Updated",
         description: "Your memory has been updated successfully.",
       });
-      navigate("/memories");
+      setTimeout(() => {
+        navigate("/memories");
+      }, 500); // Short delay to ensure toast is visible
     },
     onError: (error: Error) => {
       toast({

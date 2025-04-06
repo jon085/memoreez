@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Memory, Category } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -136,9 +136,7 @@ const MemoriesPage = () => {
                 <p className="text-gray-500 mb-4">
                   You need to sign in to access your personal memories.
                 </p>
-                <Link href="/auth">
-                  <Button>Sign In</Button>
-                </Link>
+                <Button onClick={() => navigate("/auth")}>Sign In</Button>
               </div>
             ) : filteredUserMemories.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-lg shadow">
@@ -148,18 +146,14 @@ const MemoriesPage = () => {
                     ? "No memories match your current filters. Try adjusting your search criteria."
                     : "You haven't created any memories yet. Start capturing your special moments now!"}
                 </p>
-                <Link href="/memories/add">
-                  <Button>Create Your First Memory</Button>
-                </Link>
+                <Button onClick={() => navigate("/memories/add")}>Create Your First Memory</Button>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredUserMemories.map((memory) => (
-                  <Link key={memory.id} href={`/memories/${memory.id}`}>
-                    <a className="cursor-pointer h-full">
-                      <MemoryCard memory={memory} />
-                    </a>
-                  </Link>
+                  <div key={memory.id} className="cursor-pointer h-full" onClick={() => navigate(`/memories/${memory.id}`)}>
+                    <MemoryCard memory={memory} />
+                  </div>
                 ))}
               </div>
             )}
@@ -179,19 +173,15 @@ const MemoriesPage = () => {
                     : "There are no public memories to display yet. Be the first to share a memory!"}
                 </p>
                 {user && (
-                  <Link href="/memories/add">
-                    <Button>Share a Memory</Button>
-                  </Link>
+                  <Button onClick={() => navigate("/memories/add")}>Share a Memory</Button>
                 )}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPublicMemories.map((memory) => (
-                  <Link key={memory.id} href={`/memories/${memory.id}`}>
-                    <a className="cursor-pointer h-full">
-                      <MemoryCard memory={memory} />
-                    </a>
-                  </Link>
+                  <div key={memory.id} className="cursor-pointer h-full" onClick={() => navigate(`/memories/${memory.id}`)}>
+                    <MemoryCard memory={memory} />
+                  </div>
                 ))}
               </div>
             )}
