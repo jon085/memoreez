@@ -33,9 +33,12 @@ interface MemoryFormProps {
   memoryId?: number;
 }
 
-const formSchema = insertMemorySchema.extend({
-  imageUrl: z.string().optional(),
-});
+const formSchema = insertMemorySchema
+  .omit({ userId: true }) // Remove userId from validation as it will be added from current user
+  .extend({
+    imageUrl: z.string().optional(),
+    visibility: z.enum(["public", "private"]).default("private"),
+  });
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -202,10 +205,11 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   });
 
   // Handle form submission
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     console.log("Form submitted with data:", data);
     console.log("Current user:", user);
     console.log("Authentication state:", { isAuthenticated: !!user, userId: user?.id });
+    console.log("Form state:", form.formState);
     
     // Check for form validation errors
     if (Object.keys(form.formState.errors).length > 0) {
@@ -225,16 +229,25 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
     }
 
     setIsSubmitting(true);
-    if (memoryId) {
-      console.log("Updating memory with ID:", memoryId);
-      updateMemoryMutation.mutate(data);
-    } else {
-      console.log("Creating new memory");
-      // The server will get userId from the session, but we'll include it explicitly too
-      createMemoryMutation.mutate({
-        ...data,
-        userId: user.id,
-      });
+    try {
+      if (memoryId) {
+        console.log("Updating memory with ID:", memoryId);
+        await updateMemoryMutation.mutateAsync(data);
+        console.log("Memory update completed");
+      } else {
+        console.log("Creating new memory");
+        // The server will get userId from the session, but we'll include it explicitly too
+        const memoryData = {
+          ...data,
+          userId: user.id,
+        };
+        console.log("Preparing to submit memory data:", memoryData);
+        await createMemoryMutation.mutateAsync(memoryData);
+        console.log("Memory creation completed");
+      }
+    } catch (error) {
+      console.error("Mutation failed:", error);
+      setIsSubmitting(false);
     }
   };
 

@@ -103,7 +103,7 @@ const Header = () => {
               </div>
             ) : (
               <div className="flex items-center">
-                <Link href="memories/add">
+                <Link href="/memories/add">
                   <Button variant="ghost" size="icon" className="mr-2">
                     <Plus className="h-5 w-5" />
                     <span className="sr-only">Add new memory</span>
