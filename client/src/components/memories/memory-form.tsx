@@ -82,11 +82,30 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   const createMemoryMutation = useMutation({
     mutationFn: async (data: InsertMemory) => {
       console.log("Making API request to create memory:", data);
-      // The server will set the userId based on the authenticated user's session
-      // We don't need to send userId as the server will extract it from req.user
-      const { userId, ...memoryData } = data;
-      const res = await apiRequest("POST", "/api/memories", memoryData);
-      return await res.json();
+      // We'll add debugging to see what's happening with the request
+      try {
+        const res = await fetch("/api/memories", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          credentials: "include"
+        });
+        
+        console.log("API response status:", res.status);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("API error response:", errorText);
+          throw new Error(errorText || res.statusText);
+        }
+        
+        const responseData = await res.json();
+        console.log("API success response:", responseData);
+        return responseData;
+      } catch (error) {
+        console.error("API request failed:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       console.log("Memory created successfully:", data);
@@ -119,11 +138,33 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   const updateMemoryMutation = useMutation({
     mutationFn: async (data: FormValues) => {
       console.log("Making API request to update memory:", data);
-      // Remove userId if it exists in the data
-      // The server will use the authenticated user from the session
-      const { userId, ...memoryData } = data as any;
-      const res = await apiRequest("PUT", `/api/memories/${memoryId}`, memoryData);
-      return await res.json();
+      try {
+        // Include all data including userId for debugging
+        const res = await fetch(`/api/memories/${memoryId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...data,
+            userId: user?.id // Include userId explicitly for now
+          }),
+          credentials: "include"
+        });
+        
+        console.log("API response status:", res.status);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("API error response:", errorText);
+          throw new Error(errorText || res.statusText);
+        }
+        
+        const responseData = await res.json();
+        console.log("API success response:", responseData);
+        return responseData;
+      } catch (error) {
+        console.error("API request failed:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/memories"] });
@@ -152,6 +193,8 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   // Handle form submission
   const onSubmit = (data: FormValues) => {
     console.log("Form submitted with data:", data);
+    console.log("Current user:", user);
+    console.log("Authentication state:", { isAuthenticated: !!user, userId: user?.id });
     
     // Check for form validation errors
     if (Object.keys(form.formState.errors).length > 0) {
@@ -176,8 +219,11 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
       updateMemoryMutation.mutate(data);
     } else {
       console.log("Creating new memory");
-      // The server will get userId from the session
-      createMemoryMutation.mutate(data as any);
+      // The server will get userId from the session, but we'll include it explicitly too
+      createMemoryMutation.mutate({
+        ...data,
+        userId: user.id,
+      });
     }
   };
 
