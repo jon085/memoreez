@@ -124,8 +124,8 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
       });
       setTimeout(() => {
         console.log("Navigating to memories page after creation");
-        // Use relative path to avoid double slash issues
-        navigate("memories");
+        // Use absolute path to avoid issues
+        navigate("/memories");
       }, 500); // Short delay to ensure toast is visible
     },
     onError: (error: Error) => {
@@ -185,8 +185,8 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
         description: "Your memory has been updated successfully.",
       });
       setTimeout(() => {
-        // Use relative path to avoid double slash issues
-        navigate("memories");
+        // Use absolute path to avoid issues
+        navigate("/memories");
       }, 500); // Short delay to ensure toast is visible
     },
     onError: (error: Error) => {
@@ -366,7 +366,7 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate("memories")}
+            onClick={() => navigate("/memories")}
             disabled={isSubmitting}
           >
             Cancel
