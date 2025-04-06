@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertMemorySchema, InsertMemory, Memory } from "@shared/schema";
+import { insertMemorySchema, InsertMemory, Memory, Category } from "@shared/schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/use-auth";
 import { z } from "zod";
 import {
   Form,
@@ -43,9 +44,10 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
 
   // Fetch categories for the dropdown
-  const { data: categories, isLoading: isCategoriesLoading } = useQuery({
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
   });
 
@@ -79,14 +81,27 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   // Create memory mutation
   const createMemoryMutation = useMutation({
     mutationFn: async (data: InsertMemory) => {
-      const res = await apiRequest("POST", "/api/memories", data);
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to create memory");
+      console.log("Making API request to create memory:", data);
+      try {
+        const res = await apiRequest("POST", "/api/memories", data);
+        console.log("API response status:", res.status);
+        
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error("API error response:", errorData);
+          throw new Error(errorData.message || "Failed to create memory");
+        }
+        
+        const responseData = await res.json();
+        console.log("API success response:", responseData);
+        return responseData;
+      } catch (error) {
+        console.error("API request failed:", error);
+        throw error;
       }
-      return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Memory created successfully:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/memories"] });
       queryClient.invalidateQueries({ queryKey: ["/api/memories/public"] });
       toast({
@@ -94,10 +109,12 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
         description: "Your memory has been saved successfully.",
       });
       setTimeout(() => {
+        console.log("Navigating to memories page after creation");
         navigate("/memories");
       }, 500); // Short delay to ensure toast is visible
     },
     onError: (error: Error) => {
+      console.error("Memory creation failed:", error);
       toast({
         title: "Error",
         description: error.message,
@@ -105,6 +122,7 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
       });
     },
     onSettled: () => {
+      console.log("Memory creation request settled");
       setIsSubmitting(false);
     },
   });
@@ -112,12 +130,27 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
   // Update memory mutation
   const updateMemoryMutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      const res = await apiRequest("PUT", `/api/memories/${memoryId}`, data);
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to update memory");
+      console.log("Making API request to update memory:", data);
+      try {
+        const res = await apiRequest("PUT", `/api/memories/${memoryId}`, {
+          ...data,
+          userId: user?.id, // Include userId in update as well
+        });
+        console.log("API response status:", res.status);
+        
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error("API error response:", errorData);
+          throw new Error(errorData.message || "Failed to update memory");
+        }
+        
+        const responseData = await res.json();
+        console.log("API success response:", responseData);
+        return responseData;
+      } catch (error) {
+        console.error("API request failed:", error);
+        throw error;
       }
-      return await res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/memories"] });
@@ -145,11 +178,36 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
 
   // Handle form submission
   const onSubmit = (data: FormValues) => {
+    console.log("Form submitted with data:", data);
+    
+    // Check for form validation errors
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.error("Form has validation errors:", form.formState.errors);
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!user) {
+      console.error("User is not authenticated");
+      toast({
+        title: "Error",
+        description: "You must be logged in to save a memory",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     if (memoryId) {
+      console.log("Updating memory with ID:", memoryId);
       updateMemoryMutation.mutate(data);
     } else {
-      createMemoryMutation.mutate(data);
+      console.log("Creating new memory with userId:", user.id);
+      // Add the userId to the data when creating a new memory
+      createMemoryMutation.mutate({
+        ...data,
+        userId: user.id,
+      });
     }
   };
 
