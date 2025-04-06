@@ -84,7 +84,14 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
       console.log("Making API request to create memory:", data);
       // We'll add debugging to see what's happening with the request
       try {
-        const res = await fetch("/api/memories", {
+        console.log("Environment info:", { 
+          baseUrl: window.location.origin,
+          currentPath: window.location.pathname 
+        });
+        const apiUrl = `${window.location.origin}/api/memories`;
+        console.log("Making request to:", apiUrl);
+        
+        const res = await fetch(apiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -117,7 +124,8 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
       });
       setTimeout(() => {
         console.log("Navigating to memories page after creation");
-        navigate("/memories");
+        // Use relative path to avoid double slash issues
+        navigate("memories");
       }, 500); // Short delay to ensure toast is visible
     },
     onError: (error: Error) => {
@@ -139,8 +147,10 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
     mutationFn: async (data: FormValues) => {
       console.log("Making API request to update memory:", data);
       try {
-        // Include all data including userId for debugging
-        const res = await fetch(`/api/memories/${memoryId}`, {
+        const apiUrl = `${window.location.origin}/api/memories/${memoryId}`;
+        console.log("Making update request to:", apiUrl);
+        
+        const res = await fetch(apiUrl, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -175,7 +185,8 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
         description: "Your memory has been updated successfully.",
       });
       setTimeout(() => {
-        navigate("/memories");
+        // Use relative path to avoid double slash issues
+        navigate("memories");
       }, 500); // Short delay to ensure toast is visible
     },
     onError: (error: Error) => {
@@ -355,7 +366,7 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate("/memories")}
+            onClick={() => navigate("memories")}
             disabled={isSubmitting}
           >
             Cancel

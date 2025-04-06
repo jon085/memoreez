@@ -28,22 +28,24 @@ const Header = () => {
     logoutMutation.mutate();
   };
 
+  // Use paths without leading slashes to avoid URL construction issues
   const navItems = [
     { name: "Home", path: "/" },
-    { name: "Explore", path: "/memories" },
-    { name: "Categories", path: "/categories" },
-    { name: "About", path: "/about" },
+    { name: "Explore", path: "memories" },
+    { name: "Categories", path: "categories" },
+    { name: "About", path: "about" },
   ];
 
+  // Use paths without leading slashes to avoid URL construction issues
   const userMenuItems = [
-    { name: "Your Profile", path: "/profile" },
-    { name: "My Memories", path: "/memories" },
-    { name: "Settings", path: "/settings" },
+    { name: "Your Profile", path: "profile" },
+    { name: "My Memories", path: "memories" },
+    { name: "Settings", path: "settings" },
   ];
 
   // Add admin dashboard link if user is admin
   if (user?.role === "admin") {
-    userMenuItems.push({ name: "Admin Dashboard", path: "/admin" });
+    userMenuItems.push({ name: "Admin Dashboard", path: "admin" });
   }
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
@@ -90,18 +92,18 @@ const Header = () => {
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             {!user ? (
               <div>
-                <Link href="/auth">
+                <Link href="auth">
                   <Button variant="outline" className="mr-2">
                     Sign in
                   </Button>
                 </Link>
-                <Link href="/auth">
+                <Link href="auth">
                   <Button>Sign up</Button>
                 </Link>
               </div>
             ) : (
               <div className="flex items-center">
-                <Link href="/memories/add">
+                <Link href="memories/add">
                   <Button variant="ghost" size="icon" className="mr-2">
                     <Plus className="h-5 w-5" />
                     <span className="sr-only">Add new memory</span>
@@ -215,10 +217,10 @@ const Header = () => {
                         </>
                       ) : (
                         <div className="px-2 space-y-2">
-                          <Link href="/auth" onClick={closeMobileMenu}>
+                          <Link href="auth" onClick={closeMobileMenu}>
                             <Button className="w-full">Sign in</Button>
                           </Link>
-                          <Link href="/auth" onClick={closeMobileMenu}>
+                          <Link href="auth" onClick={closeMobileMenu}>
                             <Button
                               variant="outline"
                               className="w-full"

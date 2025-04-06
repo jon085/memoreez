@@ -17,17 +17,18 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 
 function Router() {
+  // Use paths without leading slashes to avoid URL construction issues
   return (
     <Switch>
       <Route path="/" component={HomePage} />
-      <Route path="/auth" component={AuthPage} />
-      <ProtectedRoute path="/memories" component={MemoriesPage} />
-      <ProtectedRoute path="/memories/add" component={AddMemoryPage} />
-      <ProtectedRoute path="/memories/edit/:id" component={AddMemoryPage} />
-      <Route path="/memories/:id" component={MemoryDetailsPage} />
-      <ProtectedRoute path="/profile" component={ProfilePage} />
-      <ProtectedRoute path="/categories" component={CategoriesPage} />
-      <AdminRoute path="/admin" component={AdminDashboard} />
+      <Route path="auth" component={AuthPage} />
+      <ProtectedRoute path="memories" component={MemoriesPage} />
+      <ProtectedRoute path="memories/add" component={AddMemoryPage} />
+      <ProtectedRoute path="memories/edit/:id" component={AddMemoryPage} />
+      <Route path="memories/:id" component={MemoryDetailsPage} />
+      <ProtectedRoute path="profile" component={ProfilePage} />
+      <ProtectedRoute path="categories" component={CategoriesPage} />
+      <AdminRoute path="admin" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
