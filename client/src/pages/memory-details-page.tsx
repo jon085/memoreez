@@ -44,6 +44,10 @@ const MemoryDetailsPage = () => {
     error,
   } = useQuery<Memory>({
     queryKey: ["/api/memories", memoryId],
+    retry: false,
+    onError: (error) => {
+      console.error("Error fetching memory:", error);
+    }
   });
 
   // Fetch memory owner
@@ -97,6 +101,10 @@ const MemoryDetailsPage = () => {
 
   // Handle loading or error states
   if (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const is401 = errorMessage.includes("401");
+    const is403 = errorMessage.includes("403");
+    
     return (
       <div className="bg-gray-50 min-h-screen py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,15 +112,31 @@ const MemoryDetailsPage = () => {
             <CardContent className="py-12">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Memory Not Found
+                  {is401 ? "Authentication Required" : is403 ? "Access Denied" : "Memory Not Found"}
                 </h2>
                 <p className="text-gray-500 mb-6">
-                  The memory you're looking for doesn't exist or you don't have permission to view it.
+                  {is401 
+                    ? "You need to be logged in to view this private memory." 
+                    : is403
+                    ? "You don't have permission to view this memory." 
+                    : "The memory you're looking for doesn't exist or you don't have permission to view it."}
                 </p>
-                <Button onClick={() => navigate("/memories")}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Memories
-                </Button>
+                {is401 ? (
+                  <div className="flex flex-col sm:flex-row justify-center gap-3">
+                    <Button onClick={() => navigate("/auth")}>
+                      Sign In
+                    </Button>
+                    <Button variant="outline" onClick={() => navigate("/memories")}>
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      Back to Memories
+                    </Button>
+                  </div>
+                ) : (
+                  <Button onClick={() => navigate("/memories")}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Memories
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

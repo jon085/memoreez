@@ -186,10 +186,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Memory not found" });
       }
       
-      // Check permissions for private memories
+      // Check if authenticated
+      const isAuth = req.isAuthenticated();
+      
+      // For private memories, require authentication and appropriate permissions
       if (memory.visibility === "private") {
-        if (!req.isAuthenticated() || (req.user.id !== memory.userId && req.user.role !== "admin")) {
-          return res.status(403).json({ message: "Forbidden: This memory is private" });
+        if (!isAuth) {
+          return res.status(401).json({ message: "Authentication required: This memory is private" });
+        }
+        
+        if (req.user.id !== memory.userId && req.user.role !== "admin") {
+          return res.status(403).json({ message: "Forbidden: You don't have permission to view this private memory" });
         }
       }
       
