@@ -23,7 +23,7 @@ const AddMemoryPage = () => {
 
   // Fetch memory if editing
   const { data: memory, isLoading } = useQuery<Memory>({
-    queryKey: ["/api/memories", memoryId],
+    queryKey: memoryId ? [`/api/memories/${memoryId}`] : ["/api/memories"],
     enabled: !!memoryId,
   });
 

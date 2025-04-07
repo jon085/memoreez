@@ -56,7 +56,7 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
 
   // If editing, fetch the memory data
   const { data: existingMemory, isLoading: isMemoryLoading } = useQuery<Memory>({
-    queryKey: ["/api/memories", memoryId],
+    queryKey: memoryId ? [`/api/memories/${memoryId}`] : ["/api/memories"],
     enabled: !!memoryId,
   });
 
@@ -180,14 +180,16 @@ const MemoryForm = ({ memoryId }: MemoryFormProps) => {
       }
     },
     onSuccess: () => {
+      console.log("Memory updated successfully");
       queryClient.invalidateQueries({ queryKey: ["/api/memories"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/memories", memoryId] });
+      queryClient.invalidateQueries({ queryKey: [`/api/memories/${memoryId}`] });
       queryClient.invalidateQueries({ queryKey: ["/api/memories/public"] });
       toast({
         title: "Memory Updated",
         description: "Your memory has been updated successfully.",
       });
       setTimeout(() => {
+        console.log("Navigating to memories page after update");
         // Use absolute path to avoid issues
         navigate("/memories");
       }, 500); // Short delay to ensure toast is visible

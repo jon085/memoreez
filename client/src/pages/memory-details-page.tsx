@@ -244,7 +244,10 @@ const MemoryDetailsPage = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/memories/edit/${memory.id}`)}
+                  onClick={() => {
+                    console.log(`Navigating to edit page for memory ${memory.id}`);
+                    navigate(`/memories/edit/${memory.id}`);
+                  }}
                 >
                   <Edit className="h-4 w-4 mr-1" />
                   Edit
