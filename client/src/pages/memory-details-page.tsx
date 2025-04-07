@@ -43,7 +43,7 @@ const MemoryDetailsPage = () => {
     isLoading: isLoadingMemory,
     error,
   } = useQuery<Memory>({
-    queryKey: ["/api/memories", memoryId],
+    queryKey: [`/api/memories/${memoryId}`],
     retry: false,
     onError: (error) => {
       console.error("Error fetching memory:", error);
@@ -52,13 +52,13 @@ const MemoryDetailsPage = () => {
 
   // Fetch memory owner
   const { data: memoryOwner, isLoading: isLoadingOwner } = useQuery<User>({
-    queryKey: ["/api/users", memory?.userId],
-    enabled: !!memory,
+    queryKey: memory?.userId ? [`/api/users/${memory.userId}`] : [''],
+    enabled: !!memory?.userId,
   });
 
   // Fetch category
   const { data: category } = useQuery<Category>({
-    queryKey: ["/api/categories", memory?.categoryId],
+    queryKey: memory?.categoryId ? [`/api/categories/${memory.categoryId}`] : [''],
     enabled: !!memory?.categoryId,
   });
 

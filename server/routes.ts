@@ -82,6 +82,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       next(error);
     }
   });
+  
+  app.get("/api/categories/:id", async (req, res, next) => {
+    try {
+      const categoryId = parseInt(req.params.id);
+      const category = await storage.getCategory(categoryId);
+      
+      if (!category) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+
+      res.json(category);
+    } catch (error) {
+      next(error);
+    }
+  });
 
   app.post("/api/categories", isAuthenticated, async (req, res, next) => {
     try {
